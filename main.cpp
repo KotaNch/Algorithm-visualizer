@@ -6,6 +6,7 @@
 #include <chrono>
 #include <algorithm>
 #include <bits/stdc++.h>
+#include <queue>  
 
 #ifdef _WIN32
 #include <windows.h>
@@ -16,19 +17,23 @@
 using namespace std;
 
 
+
 void clearScreen(){
-    #ifdef _WIN32
-        system("cls");
-    #else
-        system("clear");
-    #endif
+#ifdef _WIN32
+  system("cls");
+#else
+  system("clear");
+#endif
 }
 
 void sleepMs(int ms){
-    this_thread::sleep_for(chrono::milliseconds(ms));
+this_thread::sleep_for(chrono::milliseconds(ms));
 
 }
-int delay;
+int delay = 500;
+
+
+
 
 
 void visualize(const vector<int>& arr, int maxHeight, const string& message = ""){
@@ -60,7 +65,9 @@ void visualize(const vector<int>& arr, int maxHeight, const string& message = ""
     cout << endl;
     sleepMs(delay);
 }
-
+/////////////////////////////////////////////////////////////
+//                  SORTS
+/////////////////////////////////////////////////////////////
 void bubbleSort(vector<int> arr, int maxHeight){
     visualize(arr,maxHeight,"Bubble sort: start");
     int n = arr.size()-1;
@@ -89,7 +96,7 @@ void selectionSort(vector<int> arr, int maxHeight){
         }
     }
     visualize(arr, maxHeight, "Selection sort: end");
-
+    
 }
 
 void insertSort(vector<int> arr, int maxHeight){
@@ -106,17 +113,17 @@ void insertSort(vector<int> arr, int maxHeight){
         }
         arr[j+1] = k;
         visualize(arr,maxHeight, "Insertion sort: inserted" + to_string(k));
-    
+        
         
     }
     visualize(arr,maxHeight,"Insertion sort: end");
-
+    
 }
 
 int partition(vector<int> &vec, int low, int high, int maxHeight){
     int pivot = vec[high];
     int i = (low-1);
-
+    
     for (int j = low; j <= high -1; j++){
         if (vec[j] <= pivot){
             i++;
@@ -127,7 +134,7 @@ int partition(vector<int> &vec, int low, int high, int maxHeight){
     swap(vec[i+1], vec[high]);
     visualize(vec, maxHeight, "Quick sort: partition — pivot placed at position " + to_string(i+1));
 
-
+    
     return (i+1);
 }
 
@@ -159,6 +166,91 @@ void twodirectionalBubbleSort(vector<int> arr, int maxHeight){
     }
     visualize(arr,maxHeight,"Twodirectional Bubble sort: end");
 }
+
+///////////////////////////////////////////////////////
+//                  TREES
+///////////////////////////////////////////////////////
+
+struct TreeNode{
+    int value;
+    TreeNode* left;
+    TreeNode* right;
+    TreeNode(int val): value(val), left(nullptr), right(nullptr) {}
+};
+
+
+void printTree(TreeNode* root,int highlight, int space = 0, int indent = 4){
+    if (root == nullptr) return;
+    space += indent;
+    printTree(root->right,highlight,space);
+    cout << endl;
+    for (int i = indent; i <space; i++) cout << " ";
+    if(root->value == highlight)cout << "(" << root -> value << ")" << endl;
+    else cout << "[" << root -> value << "]" << endl;
+    printTree(root->left,highlight,space);
+    
+}
+
+void bfs(TreeNode* root) {
+    if (!root) return; 
+    queue<TreeNode*> q;
+    q.push(root);
+    while (!q.empty()){
+        TreeNode* cur = q.front(); q.pop();
+        clearScreen();
+        cout <<  "BFS: visiting node " << cur->value << endl << endl;
+        printTree(root, cur->value);
+        sleepMs(delay);
+        if (cur->left) q.push(cur->left);
+        if (cur->right) q.push(cur->right);
+    }
+}
+
+
+
+void dfs(TreeNode* node, TreeNode* root){
+    if (!node) return;
+    clearScreen();
+    cout << "DFS: visiting note " << node->value<<endl;
+    sleepMs(delay);
+    dfs(node->left, root);
+    dfs(node->right,root);
+}
+
+TreeNode* generateRandomTreeDepth(int maxDepth, int maxValue, double probability = 0.7){
+    if (maxDepth == 0) return nullptr;
+    if ((double)rand()/ RAND_MAX > probability) return nullptr;
+    TreeNode* node = new TreeNode(rand()% maxValue + 1);
+    node ->left = generateRandomTreeDepth(maxDepth-1,maxValue,probability);
+
+    node ->right = generateRandomTreeDepth(maxDepth-1,maxValue,probability);
+    return node;
+}
+
+TreeNode* insertRandom(TreeNode* root,int value){
+    if (!root) return  new TreeNode(value);
+    if (rand()% 2 == 0) root ->left = insertRandom(root->left, value);
+    else root->right = insertRandom(root->right,value);
+    return root;
+}
+
+TreeNode* generateRandomTreeNodes(int nodeCount, int maxValue){
+    TreeNode* root = nullptr;
+    for (int i = 0; i < nodeCount; i++){
+        int val = rand() % maxValue  +1;
+        root = insertRandom(root, val);
+
+    }
+    return root;
+}
+
+
+void deleteTree(TreeNode* root){
+    if (!root) return;
+    deleteTree(root->left);
+    deleteTree(root->right);
+    delete root;
+}
 int main(){
     srand(time(nullptr));
     cout << "=== Visualizing Sorting Algorithms in the Terminal (C++) ===" << endl;
@@ -168,13 +260,15 @@ int main(){
     cout << "2. Selection sort \n";
     cout << "3. Insertion sort \n";
     cout << "4. Quick sort\n";
+    cout << "5. BFS on binary tree\n";
+    cout << "6. DFS on binary tree\n";
 
 
     int algoChoice;
     while (true){
-        cout << "Enter the algorithm number (1-4):";
+        cout << "Enter the algorithm number (1-6):";
         cin >> algoChoice;
-        if (cin.fail() || algoChoice<1 || algoChoice >4){
+        if (cin.fail() || algoChoice<1 || algoChoice >6){
             cin.clear();
             cin.ignore(10000, '\n');
             cout << "Error: Please enter a number between 1 and 4.\n";
@@ -183,6 +277,7 @@ int main(){
 
 
     int n;
+    if (algoChoice <= 4){
     while (true){
         cout <<"Enter the number of items (5-25): ";
         cin >> n;
@@ -239,10 +334,56 @@ int main(){
     quickSortWrapper(arr,maxHeight);
     break;
     }
+}
+    else{
+        int treeType, depthOrNodes,maxValue;
+        cout << "\nTree generation:\n";
+        cout << "1. By depth (random shape)\n";
+        cout << "1. By number of nodes\n";
+        cin >> treeType;
+
+        if (treeType ==1){
+            cout << "Max depth (2-5): ";
+            cin >> depthOrNodes;
+            cout << "Max value (10-50): ";
+            cin >> maxValue;
+            cout << "Probability of node (0.5-1.0): ";
+            double prob;
+            cin >> prob;
+            TreeNode* root = generateRandomTreeDepth(depthOrNodes,maxValue,prob);
+            if (!root) { cout << "Empty tree!\n"; return 0;}
+            cout <<  "\nGenerated tree:\n";
+            printTree(root, -1);
+            cout << "\nPress Enter to start " << (algoChoice == 5 ? "BFS": "DFS") << "...";
+            cin.ignore();
+            cin.get();
+            if (algoChoice == 5) bfs(root);
+            else dfs(root,root);
+            deleteTree(root);
+        }
+        else{
+            cout << "Number of nodes (5-15) ";
+            cin >> depthOrNodes;
+            cout << "Max value (10-50): "; cin >> maxValue;
+            TreeNode* root = generateRandomTreeNodes(depthOrNodes,maxValue);
+            cout <<  "\nGenerated tree:\n";
+            printTree(root, -1);
+            cout << "\nPress Enter to start " << (algoChoice == 5 ? "BFS": "DFS") << "...";
+            cin.ignore();
+            cin.get();
+            if (algoChoice == 5) bfs(root);
+            else dfs(root,root);
+            deleteTree(root);
+        }
+    }
     cout << "\nPress Enter to exit...";
     cin.get();
     return 0;
  
 }
+          
 
-//TODO: other algorithms like alogrithms with grahs like bfs dfs...
+
+
+ 
+                 
