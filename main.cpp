@@ -74,8 +74,9 @@ void bubbleSort(vector<int> arr, int maxHeight){
     for (int i= 0; i<n;i++){
         for (int j = 0; j < n - i; j++){
             if (arr[j] > arr[j+1]){
+                int a = arr[j], b = arr[j+1];
                 swap(arr[j],arr[j+1]);
-                visualize(arr,maxHeight, "Bobble sort: swap " + to_string(arr[j+1]) + " and " + to_string(arr[j]));
+                visualize(arr,maxHeight, "Bobble sort: swap " + to_string(a) + " and " + to_string(b));
             }
         }
     }
@@ -339,7 +340,7 @@ int main(){
         int treeType, depthOrNodes,maxValue;
         cout << "\nTree generation:\n";
         cout << "1. By depth (random shape)\n";
-        cout << "1. By number of nodes\n";
+        cout << "2. By number of nodes\n";
         cin >> treeType;
 
         if (treeType ==1){
@@ -381,9 +382,4 @@ int main(){
     return 0;
  
 }
-          
-
-
-
- 
-                 
+        
