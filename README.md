@@ -19,7 +19,7 @@ Also I want to try write it on the python but I dont do it yet.
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-username/sorting-visualizer.git
+git clone https://github.com/KotaNch/sorting-visualizer.git
 cd sorting-visualizer
 ```
 ### 2. Compile (I did it yet and you can skip this step)
@@ -49,4 +49,3 @@ visualizer_for_windows.exe
 - **Sorting:** Bubble, Selection, Insertion, Quick Sort
 - **Trees:** BFS, DFS
 - **Adjustable animation speed**
-- **Random data generation**   
